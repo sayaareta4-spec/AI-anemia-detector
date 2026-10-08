@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aplikasi prototipe skrining awal anemia berbasis survei dan citra konjungtiva.">
+  <title>HemaCheck — Skrining Awal Anemia</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/heart.svg" alt="" class="brand-icon">
+      <div><strong>HemaCheck</strong><span>Early Anemia Screening</span></div>
+    </div>
+    <span class="badge">PROTOTIPE MAHASISWA</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">HEALTH × TECHNOLOGY</span>
+        <h1>Kenali tanda awal anemia<br><em>lebih dini.</em></h1>
+        <p>Isi survei singkat, lalu unggah foto konjungtiva mata untuk simulasi skrining awal.</p>
+        <button class="primary" onclick="startSurvey()">Mulai Skrining <span>→</span></button>
+        <p class="small-note">Bukan diagnosis medis. Hasil perlu dikonfirmasi oleh tenaga kesehatan.</p>
+      </div>
+      <div class="hero-card">
+        <div class="pulse"></div>
+        <div class="hero-card-title">HemaCheck</div>
+        <div class="mini-result"><span class="dot green"></span> Skrining awal</div>
+        <div class="mini-bars"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </section>
+
+    <section id="surveySection" class="panel hidden">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">01 — SURVEI GEJALA</span>
+          <h2>Bagaimana kondisi kamu akhir-akhir ini?</h2>
+          <p>Pilih jawaban yang paling sesuai dalam 2–4 minggu terakhir.</p>
+        </div>
+        <div class="progress-wrap"><span id="progressText">0/12</span><div class="progress"><div id="progressBar"></div></div></div>
+      </div>
+      <form id="surveyForm"></form>
+      <div class="survey-actions">
+        <button class="secondary" type="button" onclick="resetSurvey()">Ulangi</button>
+        <button class="primary" type="button" onclick="submitSurvey()">Lanjut ke Scan →</button>
+      </div>
+    </section>
+
+    <section id="scanSection" class="panel hidden">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">02 — SCAN KONJUNGTIVA</span>
+          <h2>Gunakan foto konjungtiva mata</h2>
+          <p>Gunakan pencahayaan cukup dan hindari filter kamera.</p>
+        </div>
+      </div>
+
+      <div class="scan-grid">
+        <div class="camera-box">
+          <video id="camera" autoplay playsinline class="media hidden"></video>
+          <canvas id="canvas" class="hidden"></canvas>
+          <img id="preview" class="media hidden" alt="Pratinjau foto">
+          <div id="cameraPlaceholder" class="camera-placeholder">
+            <img src="assets/eye.svg" alt="">
+            <h3>Belum ada gambar</h3>
+            <p>Pilih foto dari galeri atau buka kamera.</p>
+          </div>
+          <div class="camera-controls">
+            <label class="upload-btn">📁 Pilih dari Galeri
+              <input id="fileInput" type="file" accept="image/*">
+            </label>
+            <button class="secondary" type="button" id="cameraBtn" onclick="openCamera()">📷 Gunakan Kamera</button>
+            <button class="capture primary hidden" type="button" id="captureBtn" onclick="capturePhoto()">Ambil Foto</button>
+          </div>
+          <p id="cameraStatus" class="small-note"></p>
+        </div>
+
+        <div class="tips">
+          <h3>Tips foto</h3>
+          <div class="tip"><b>01</b><span>Pastikan area mata terlihat jelas dan fokus.</span></div>
+          <div class="tip"><b>02</b><span>Gunakan cahaya yang cukup, jangan terlalu gelap.</span></div>
+          <div class="tip"><b>03</b><span>Hindari filter atau efek warna pada kamera.</span></div>
+          <div class="tip"><b>04</b><span>Hasil foto di prototipe ini hanya untuk simulasi.</span></div>
+          <button class="primary full" id="analyzeBtn" type="button" onclick="analyze()" disabled>Analisis Skrining</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultSection" class="panel hidden">
+      <div class="result-top">
+        <div>
+          <span class="eyebrow">03 — HASIL SKRINING</span>
+          <h2 id="resultTitle">Hasil kamu</h2>
+          <p id="resultSub"></p>
+        </div>
+        <div id="resultCircle" class="result-circle"><span id="resultIcon">✓</span></div>
+      </div>
+
+      <div id="resultCard" class="result-card">
+        <div class="result-label" id="resultLabel">AMAN</div>
+        <p id="resultMessage"></p>
+      </div>
+
+      <div class="score-grid">
+        <div class="score-box"><span>Skor survei</span><strong id="surveyScore">0</strong><small>/ 24</small></div>
+        <div class="score-box"><span>Indikasi visual</span><strong id="visualScore">—</strong><small>simulasi</small></div>
+        <div class="score-box"><span>Level</span><strong id="levelText">Aman</strong><small>skrining</small></div>
+      </div>
+
+      <div class="recommendations">
+        <div class="section-head compact">
+          <div><span class="eyebrow">REKOMENDASI PERSONAL</span><h2>Langkah yang bisa kamu lakukan</h2></div>
+        </div>
+        <div id="recommendationList" class="recommendation-list"></div>
+      </div>
+
+      <div class="disclaimer">
+        <b>Catatan penting:</b> HemaCheck adalah prototipe edukasi/simulasi. Warna konjungtiva dan jawaban survei tidak dapat memastikan seseorang mengalami anemia. Jika keluhan menetap atau hasil mengarah ke risiko, konsultasikan dengan tenaga kesehatan dan pertimbangkan pemeriksaan darah sesuai anjuran.
+      </div>
+
+      <div class="survey-actions">
+        <button class="secondary" type="button" onclick="location.reload()">Skrining Baru</button>
+        <button class="primary" type="button" onclick="window.print()">Cetak Hasil</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 HemaCheck • Prototipe skrining awal berbasis web</footer>
+  <script src="script.js"></script>
+</body>
+</html>
